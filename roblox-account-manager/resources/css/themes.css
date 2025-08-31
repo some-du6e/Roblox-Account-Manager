@@ -1,0 +1,227 @@
+/* Theme Definitions */
+
+/* Dark Theme (Default) */
+[data-theme="dark"] {
+    --primary-bg: #1a1a1a;
+    --secondary-bg: #2a2a2a;
+    --tertiary-bg: #3a3a3a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #888888;
+    --accent-color: #00d4ff;
+    --accent-hover: #00b8e6;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --border-color: #444444;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --primary-bg: #ffffff;
+    --secondary-bg: #f8f9fa;
+    --tertiary-bg: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --text-muted: #6c757d;
+    --accent-color: #007bff;
+    --accent-hover: #0056b3;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --border-color: #dee2e6;
+}
+
+/* Blue Theme */
+[data-theme="blue"] {
+    --primary-bg: #0f1419;
+    --secondary-bg: #1a2332;
+    --tertiary-bg: #253244;
+    --text-primary: #ffffff;
+    --text-secondary: #b8c4d1;
+    --text-muted: #7c8895;
+    --accent-color: #2196f3;
+    --accent-hover: #1976d2;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --border-color: #3d4a5c;
+}
+
+/* Green Theme */
+[data-theme="green"] {
+    --primary-bg: #0d1b0d;
+    --secondary-bg: #1a2f1a;
+    --tertiary-bg: #274327;
+    --text-primary: #ffffff;
+    --text-secondary: #c8dcc8;
+    --text-muted: #8ba58b;
+    --accent-color: #4caf50;
+    --accent-hover: #388e3c;
+    --success-color: #66bb6a;
+    --warning-color: #ffa726;
+    --danger-color: #ef5350;
+    --border-color: #3e5a3e;
+}
+
+/* Purple Theme */
+[data-theme="purple"] {
+    --primary-bg: #1a0d1a;
+    --secondary-bg: #2f1a2f;
+    --tertiary-bg: #432743;
+    --text-primary: #ffffff;
+    --text-secondary: #dcc8dc;
+    --text-muted: #a58ba5;
+    --accent-color: #9c27b0;
+    --accent-hover: #7b1fa2;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --border-color: #5a3e5a;
+}
+
+/* Red Theme */
+[data-theme="red"] {
+    --primary-bg: #1a0a0a;
+    --secondary-bg: #2f1515;
+    --tertiary-bg: #432020;
+    --text-primary: #ffffff;
+    --text-secondary: #dcc0c0;
+    --text-muted: #a57777;
+    --accent-color: #f44336;
+    --accent-hover: #d32f2f;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --border-color: #5a2e2e;
+}
+
+/* Orange Theme */
+[data-theme="orange"] {
+    --primary-bg: #1a1000;
+    --secondary-bg: #2f2000;
+    --tertiary-bg: #433000;
+    --text-primary: #ffffff;
+    --text-secondary: #dcd0b0;
+    --text-muted: #a59570;
+    --accent-color: #ff9800;
+    --accent-hover: #f57c00;
+    --success-color: #4caf50;
+    --warning-color: #ffc107;
+    --danger-color: #f44336;
+    --border-color: #5a4500;
+}
+
+/* Pink Theme */
+[data-theme="pink"] {
+    --primary-bg: #1a0515;
+    --secondary-bg: #2f0a25;
+    --tertiary-bg: #430f35;
+    --text-primary: #ffffff;
+    --text-secondary: #dcb8d0;
+    --text-muted: #a57c95;
+    --accent-color: #e91e63;
+    --accent-hover: #c2185b;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --border-color: #5a2045;
+}
+
+/* High Contrast Theme */
+[data-theme="high-contrast"] {
+    --primary-bg: #000000;
+    --secondary-bg: #1a1a1a;
+    --tertiary-bg: #333333;
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --text-muted: #cccccc;
+    --accent-color: #00ffff;
+    --accent-hover: #00cccc;
+    --success-color: #00ff00;
+    --warning-color: #ffff00;
+    --danger-color: #ff0000;
+    --border-color: #666666;
+}
+
+/* Theme-specific adjustments */
+[data-theme="light"] .account-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .account-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .modal {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="high-contrast"] * {
+    border-width: 2px !important;
+}
+
+[data-theme="high-contrast"] .btn {
+    border-width: 3px !important;
+    font-weight: bold;
+}
+
+[data-theme="high-contrast"] .account-card {
+    border-width: 2px !important;
+}
+
+[data-theme="high-contrast"] .context-menu-item:hover {
+    background-color: var(--accent-color) !important;
+    color: #000000 !important;
+}
+
+/* Theme transition animations */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom theme utilities */
+.theme-preview {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 2px solid var(--border-color);
+}
+
+.theme-preview.dark {
+    background: linear-gradient(45deg, #1a1a1a 50%, #00d4ff 50%);
+}
+
+.theme-preview.light {
+    background: linear-gradient(45deg, #ffffff 50%, #007bff 50%);
+}
+
+.theme-preview.blue {
+    background: linear-gradient(45deg, #0f1419 50%, #2196f3 50%);
+}
+
+.theme-preview.green {
+    background: linear-gradient(45deg, #0d1b0d 50%, #4caf50 50%);
+}
+
+.theme-preview.purple {
+    background: linear-gradient(45deg, #1a0d1a 50%, #9c27b0 50%);
+}
+
+.theme-preview.red {
+    background: linear-gradient(45deg, #1a0a0a 50%, #f44336 50%);
+}
+
+.theme-preview.orange {
+    background: linear-gradient(45deg, #1a1000 50%, #ff9800 50%);
+}
+
+.theme-preview.pink {
+    background: linear-gradient(45deg, #1a0515 50%, #e91e63 50%);
+}
+
+.theme-preview.high-contrast {
+    background: linear-gradient(45deg, #000000 50%, #00ffff 50%);
+}

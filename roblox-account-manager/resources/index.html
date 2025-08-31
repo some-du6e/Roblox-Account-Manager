@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Account Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fab fa-unity"></i>
+                    <span>Roblox Account Manager</span>
+                </div>
+                <div class="header-controls">
+                    <button id="settingsBtn" class="icon-btn" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button id="minimizeBtn" class="icon-btn" title="Minimize">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button id="closeBtn" class="icon-btn close" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-section">
+                <button id="addAccountBtn" class="btn primary">
+                    <i class="fas fa-plus"></i>
+                    Add Account
+                </button>
+                <button id="importBtn" class="btn">
+                    <i class="fas fa-file-import"></i>
+                    Import
+                </button>
+                <button id="exportBtn" class="btn">
+                    <i class="fas fa-file-export"></i>
+                    Export
+                </button>
+            </div>
+            <div class="toolbar-section">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search accounts...">
+                </div>
+                <select id="sortSelect">
+                    <option value="username">Sort by Username</option>
+                    <option value="joinDate">Sort by Join Date</option>
+                    <option value="lastUsed">Sort by Last Used</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Filters</h3>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="showOnline" checked>
+                            Show Online
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showOffline" checked>
+                            Show Offline
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showPremium">
+                            Premium Only
+                        </label>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Quick Actions</h3>
+                    <button id="launchAllBtn" class="btn secondary full-width">
+                        <i class="fas fa-rocket"></i>
+                        Launch All
+                    </button>
+                    <button id="refreshBtn" class="btn secondary full-width">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh All
+                    </button>
+                    <button id="backupBtn" class="btn secondary full-width">
+                        <i class="fas fa-save"></i>
+                        Backup Data
+                    </button>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Theme</h3>
+                    <select id="themeSelect">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="purple">Purple</option>
+                        <option value="red">Red</option>
+                        <option value="orange">Orange</option>
+                        <option value="pink">Pink</option>
+                        <option value="high-contrast">High Contrast</option>
+                    </select>
+                </div>
+            </aside>
+
+            <!-- Account Grid -->
+            <main class="content">
+                <div id="accountGrid" class="account-grid">
+                    <!-- Account cards will be dynamically generated here -->
+                </div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fas fa-user-plus"></i>
+                    <h3>No Accounts Found</h3>
+                    <p>Add your first Roblox account to get started.</p>
+                    <button id="addFirstAccountBtn" class="btn primary">
+                        <i class="fas fa-plus"></i>
+                        Add Account
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div id="addAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Account</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="alias">Alias (Optional):</label>
+                        <input type="text" id="alias" name="alias">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description (Optional):</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" onclick="Modal.close('addAccountModal')">Cancel</button>
+                <button type="submit" form="accountForm" class="btn primary">Add Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Account Modal -->
+    <div id="editAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Account</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editAccountForm">
+                    <input type="hidden" id="editAccountId" name="id">
+                    <div class="form-group">
+                        <label for="editUsername">Username:</label>
+                        <input type="text" id="editUsername" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">Password:</label>
+                        <input type="password" id="editPassword" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAlias">Alias (Optional):</label>
+                        <input type="text" id="editAlias" name="alias">
+                    </div>
+                    <div class="form-group">
+                        <label for="editDescription">Description (Optional):</label>
+                        <textarea id="editDescription" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" onclick="Modal.close('editAccountModal')">Cancel</button>
+                <button type="submit" form="editAccountForm" class="btn primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>General</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="autoLogin">
+                            Auto-login on startup
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="minimizeToTray">
+                            Minimize to system tray
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="checkUpdates" checked>
+                            Check for updates automatically
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Security</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="encryptData" checked>
+                            Encrypt stored data
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="requirePassword">
+                            Require password to access
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Advanced</h3>
+                    <div class="form-group">
+                        <label for="robloxPath">Roblox Installation Path:</label>
+                        <input type="text" id="robloxPath" readonly>
+                        <button type="button" class="btn" id="browseRobloxPath">Browse</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="refreshInterval">Account refresh interval (minutes):</label>
+                        <input type="number" id="refreshInterval" min="1" max="60" value="5">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" onclick="Modal.close('settingsModal')">Cancel</button>
+                <button type="button" class="btn primary" id="saveSettings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="contextMenu" class="context-menu">
+        <div class="context-menu-item" data-action="launch">
+            <i class="fas fa-play"></i>
+            Launch
+        </div>
+        <div class="context-menu-item" data-action="edit">
+            <i class="fas fa-edit"></i>
+            Edit
+        </div>
+        <div class="context-menu-item" data-action="copy">
+            <i class="fas fa-copy"></i>
+            Copy Username
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" data-action="refresh">
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+        </div>
+        <div class="context-menu-item" data-action="viewProfile">
+            <i class="fas fa-user"></i>
+            View Profile
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item danger" data-action="delete">
+            <i class="fas fa-trash"></i>
+            Delete
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/neutralino.js"></script>
+    <script src="js/Modal.js"></script>
+    <script src="js/Toast.js"></script>
+    <script src="js/ContextMenu.js"></script>
+    <script src="js/Storage.js"></script>
+    <script src="js/Account.js"></script>
+    <script src="js/RobloxAPI.js"></script>
+    <script src="js/Game.js"></script>
+    <script src="js/AccountManager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
