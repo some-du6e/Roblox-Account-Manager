@@ -1,0 +1,39 @@
+{
+  "name": "roblox-account-manager",
+  "version": "1.0.0",
+  "description": "A modern Roblox account manager built with Neutralino.js",
+  "main": "resources/index.html",
+  "scripts": {
+    "dev": "neu run",
+    "build": "neu build",
+    "clean": "neu clean",
+    "update": "neu update",
+    "dist": "neu build && neu dist",
+    "start": "neu run",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "roblox",
+    "account",
+    "manager",
+    "neutralino",
+    "electron-alternative",
+    "desktop-app"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/roblox-account-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/roblox-account-manager/issues"
+  },
+  "homepage": "https://github.com/your-username/roblox-account-manager#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

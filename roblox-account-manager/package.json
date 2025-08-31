@@ -1,0 +1,16 @@
+{
+  "name": "roblox-account-manager",
+  "version": "1.0.0",
+  "description": "Roblox Account Manager - Neutralino.js version",
+  "main": "neutralino.config.json",
+  "scripts": {
+    "start": "neu run",
+    "build": "neu build",
+    "dev": "neu run --enable-dev-tools"
+  },
+  "author": "ic3w0lf",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@neutralinojs/neu": "^10.0.0"
+  }
+}

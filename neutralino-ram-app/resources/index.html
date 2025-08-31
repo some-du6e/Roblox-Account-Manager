@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Account Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">
+                    <i class="fas fa-users"></i>
+                    Roblox Account Manager
+                </h1>
+            </div>
+            <div class="header-right">
+                <button id="settingsBtn" class="header-btn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button id="themeBtn" class="header-btn" title="Theme">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <button id="minimizeBtn" class="header-btn" title="Minimize">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button id="maximizeBtn" class="header-btn" title="Maximize">
+                    <i class="fas fa-square"></i>
+                </button>
+                <button id="closeBtn" class="header-btn close" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button id="addAccountBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Account
+                </button>
+                <button id="importBtn" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Import
+                </button>
+                <button id="exportBtn" class="btn btn-secondary">
+                    <i class="fas fa-upload"></i> Export
+                </button>
+                <button id="refreshBtn" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="toolbar-right">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search accounts..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <select id="groupFilter" class="group-filter">
+                    <option value="">All Groups</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Quick Actions</h3>
+                    <button id="launchSelectedBtn" class="btn btn-success btn-block">
+                        <i class="fas fa-play"></i> Launch Selected
+                    </button>
+                    <button id="checkAllBtn" class="btn btn-info btn-block">
+                        <i class="fas fa-check-circle"></i> Check All Accounts
+                    </button>
+                    <button id="clearDataBtn" class="btn btn-warning btn-block">
+                        <i class="fas fa-broom"></i> Clear Browser Data
+                    </button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Recent Games</h3>
+                    <div id="recentGames" class="recent-games-list">
+                        <!-- Recent games will be populated here -->
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Statistics</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Accounts:</span>
+                            <span id="totalAccounts" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Valid Accounts:</span>
+                            <span id="validAccounts" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Online:</span>
+                            <span id="onlineAccounts" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Account List -->
+            <main class="account-list-container">
+                <div class="account-list-header">
+                    <div class="bulk-actions">
+                        <input type="checkbox" id="selectAll" class="select-all-checkbox">
+                        <label for="selectAll">Select All</label>
+                        <span id="selectedCount" class="selected-count">0 selected</span>
+                    </div>
+                    <div class="view-options">
+                        <button id="gridViewBtn" class="view-btn active" title="Grid View">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button id="listViewBtn" class="view-btn" title="List View">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="accountsList" class="accounts-grid">
+                    <!-- Accounts will be populated here -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Context Menu -->
+        <div id="contextMenu" class="context-menu">
+            <div class="context-item" data-action="launch">
+                <i class="fas fa-play"></i> Launch
+            </div>
+            <div class="context-item" data-action="edit">
+                <i class="fas fa-edit"></i> Edit
+            </div>
+            <div class="context-item" data-action="delete">
+                <i class="fas fa-trash"></i> Delete
+            </div>
+            <div class="context-separator"></div>
+            <div class="context-item" data-action="copy-username">
+                <i class="fas fa-copy"></i> Copy Username
+            </div>
+            <div class="context-item" data-action="copy-user-id">
+                <i class="fas fa-copy"></i> Copy User ID
+            </div>
+            <div class="context-separator"></div>
+            <div class="context-item" data-action="check-status">
+                <i class="fas fa-sync"></i> Check Status
+            </div>
+            <div class="context-item" data-action="view-profile">
+                <i class="fas fa-user"></i> View Profile
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="accountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Account</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="alias">Alias (Optional):</label>
+                        <input type="text" id="alias" name="alias">
+                    </div>
+                    <div class="form-group">
+                        <label for="group">Group:</label>
+                        <select id="group" name="group">
+                            <option value="Default">Default</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="saveAccountBtn" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p id="loadingText">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/neutralino.js"></script>
+    <script src="js/classes/Account.js"></script>
+    <script src="js/classes/Game.js"></script>
+    <script src="js/classes/RobloxAPI.js"></script>
+    <script src="js/classes/AccountManager.js"></script>
+    <script src="js/classes/Storage.js"></script>
+    <script src="js/ui/Modal.js"></script>
+    <script src="js/ui/Toast.js"></script>
+    <script src="js/ui/ContextMenu.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

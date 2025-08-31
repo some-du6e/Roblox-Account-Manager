@@ -1,150 +1,237 @@
 /**
  * Main Account Manager class
  */
+/**
+ * Main Account Manager class - Windows Forms Style
+ */
 class AccountManager {
     constructor() {
         this.accounts = [];
-        this.filteredAccounts = [];
-        this.selectedAccounts = new Set();
-        this.currentSort = 'username';
-        this.currentFilters = {
-            showOnline: true,
-            showOffline: true,
-            showPremium: false,
-            searchQuery: ''
-        };
-        this.settings = {};
-        this.refreshInterval = null;
+        this.selectedAccounts = [];
+        this.selectedAccount = null;
+        this.lastValidAccount = null;
+        this.recentGames = [];
+        this.currentTheme = 'default';
+        this.hideUsernames = false;
+        this.currentPlaceId = '5315046213';
+        this.currentJobId = '';
+        this.currentUserId = '';
+        this.showGroups = false;
+        
+        this.robloxAPI = new RobloxAPI();
+        this.storage = new Storage();
+        
+        // Static properties matching original C#
+        this.instance = this;
         
         this.init();
     }
 
     /**
-     * Initialize the account manager
+     * Initialize the application
      */
     async init() {
         try {
-            // Initialize storage
-            await storage.init();
-            
-            // Load data
             await this.loadAccounts();
             await this.loadSettings();
-            
-            // Apply theme
-            this.applyTheme(this.settings.theme || 'dark');
-            
-            // Setup UI event listeners
             this.setupEventListeners();
-            
-            // Start refresh interval
-            this.startRefreshInterval();
-            
-            // Render initial UI
+            this.applyTheme();
             this.renderAccounts();
-            
-            Toast.success('Account Manager initialized successfully');
+            this.updatePlaceInfo();
+            this.checkPasswordRequired();
         } catch (error) {
-            console.error('Failed to initialize Account Manager:', error);
-            Toast.error('Failed to initialize application');
+            console.error('Failed to initialize AccountManager:', error);
         }
     }
 
     /**
-     * Setup event listeners
+     * Setup event listeners - Windows Forms Style
      */
     setupEventListeners() {
-        // Header controls
-        document.getElementById('settingsBtn')?.addEventListener('click', () => {
+        // Top icon controls
+        document.getElementById('historyIcon')?.addEventListener('click', () => {
+            this.showRecentGames();
+        });
+
+        document.getElementById('configBtn')?.addEventListener('click', () => {
             this.openSettings();
         });
 
-        document.getElementById('minimizeBtn')?.addEventListener('click', () => {
-            this.minimizeWindow();
+        document.getElementById('donateBtn')?.addEventListener('click', () => {
+            this.openDonate();
         });
 
-        document.getElementById('closeBtn')?.addEventListener('click', () => {
-            this.closeApplication();
+        // Add Account dropdown
+        document.getElementById('addAccountBtn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleDropdown('addAccountMenu');
         });
 
-        // Toolbar controls
-        document.getElementById('addAccountBtn')?.addEventListener('click', () => {
-            this.openAddAccountModal();
-        });
-
-        document.getElementById('addFirstAccountBtn')?.addEventListener('click', () => {
-            this.openAddAccountModal();
-        });
-
-        document.getElementById('importBtn')?.addEventListener('click', () => {
-            this.importAccounts();
-        });
-
-        document.getElementById('exportBtn')?.addEventListener('click', () => {
-            this.exportAccounts();
-        });
-
-        // Search and sort
-        document.getElementById('searchInput')?.addEventListener('input', (e) => {
-            this.updateFilter('searchQuery', e.target.value);
-        });
-
-        document.getElementById('sortSelect')?.addEventListener('change', (e) => {
-            this.setSortOrder(e.target.value);
-        });
-
-        // Sidebar filters
-        document.getElementById('showOnline')?.addEventListener('change', (e) => {
-            this.updateFilter('showOnline', e.target.checked);
-        });
-
-        document.getElementById('showOffline')?.addEventListener('change', (e) => {
-            this.updateFilter('showOffline', e.target.checked);
-        });
-
-        document.getElementById('showPremium')?.addEventListener('change', (e) => {
-            this.updateFilter('showPremium', e.target.checked);
-        });
-
-        // Quick actions
-        document.getElementById('launchAllBtn')?.addEventListener('click', () => {
-            this.launchAllAccounts();
-        });
-
-        document.getElementById('refreshBtn')?.addEventListener('click', () => {
-            this.refreshAllAccounts();
-        });
-
-        document.getElementById('backupBtn')?.addEventListener('click', () => {
-            this.createBackup();
-        });
-
-        // Theme selector
-        document.getElementById('themeSelect')?.addEventListener('change', (e) => {
-            this.applyTheme(e.target.value);
-        });
-
-        // Form submissions
-        document.getElementById('accountForm')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleAddAccount();
-        });
-
-        document.getElementById('editAccountForm')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleEditAccount();
-        });
-
-        document.getElementById('saveSettings')?.addEventListener('click', () => {
-            this.saveSettings();
-        });
-
-        // Context menu handler
-        if (window.contextMenu) {
-            window.contextMenu.setItemClickHandler((action, target) => {
-                this.handleContextMenuAction(action, target);
+        // Add Account menu items
+        document.querySelectorAll('#addAccountMenu .menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const action = e.target.dataset.action;
+                this.handleAddAccountAction(action);
+                this.hideDropdowns();
             });
-        }
+        });
+
+        // Remove button
+        document.getElementById('removeBtn')?.addEventListener('click', () => {
+            this.removeSelectedAccounts();
+        });
+
+        // Open Browser dropdown
+        document.getElementById('openBrowserBtn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleDropdown('openBrowserMenu');
+        });
+
+        // Open Browser menu items
+        document.querySelectorAll('#openBrowserMenu .menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const action = e.target.dataset.action;
+                this.handleOpenBrowserAction(action);
+                this.hideDropdowns();
+            });
+        });
+
+        // Theme and control buttons
+        document.getElementById('editThemeBtn')?.addEventListener('click', () => {
+            this.openThemeEditor();
+        });
+
+        document.getElementById('accountControlBtn')?.addEventListener('click', () => {
+            this.openAccountControl();
+        });
+
+        // Place and Job ID controls
+        document.getElementById('placeId')?.addEventListener('input', (e) => {
+            this.currentPlaceId = e.target.value;
+            this.updatePlaceInfo();
+        });
+
+        document.getElementById('placeId')?.addEventListener('click', (e) => {
+            e.target.select(); // Select all text for easy replacement
+        });
+
+        document.getElementById('jobId')?.addEventListener('input', (e) => {
+            this.currentJobId = e.target.value;
+        });
+
+        document.getElementById('jobId')?.addEventListener('click', (e) => {
+            e.target.select(); // Select all text for easy replacement
+        });
+
+        document.getElementById('shuffleIcon')?.addEventListener('click', () => {
+            this.shuffleJobId();
+        });
+
+        // User controls
+        document.getElementById('userId')?.addEventListener('input', (e) => {
+            this.currentUserId = e.target.value;
+        });
+
+        document.getElementById('followBtn')?.addEventListener('click', () => {
+            this.followUser();
+        });
+
+        document.getElementById('setAliasBtn')?.addEventListener('click', () => {
+            this.setAlias();
+        });
+
+        document.getElementById('utilitiesBtn')?.addEventListener('click', () => {
+            this.openUtilities();
+        });
+
+        // Join controls
+        document.getElementById('joinServerBtn')?.addEventListener('click', () => {
+            this.joinServer();
+        });
+
+        // Description controls
+        document.getElementById('setDescriptionBtn')?.addEventListener('click', () => {
+            this.setDescription();
+        });
+
+        // Additional controls
+        document.getElementById('saveToAccountBtn')?.addEventListener('click', () => {
+            this.saveToAccount();
+        });
+
+        document.getElementById('browserBtn')?.addEventListener('click', () => {
+            this.openBrowser();
+        });
+
+        document.getElementById('argumentsBtn')?.addEventListener('click', () => {
+            this.openArguments();
+        });
+
+        document.getElementById('joinDiscordBtn')?.addEventListener('click', () => {
+            this.joinDiscord();
+        });
+
+        // Hide usernames checkbox
+        document.getElementById('hideUsernames')?.addEventListener('change', (e) => {
+            this.hideUsernames = e.target.checked;
+            this.saveSettings();
+            this.renderAccounts();
+        });
+
+        // Account list interactions
+        document.getElementById('accountsView')?.addEventListener('click', (e) => {
+            const row = e.target.closest('.account-row');
+            if (row) {
+                this.selectAccount(row.dataset.accountId, e.ctrlKey);
+            }
+        });
+
+        // Context menu
+        document.getElementById('accountsView')?.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const row = e.target.closest('.account-row');
+            if (row) {
+                this.selectAccount(row.dataset.accountId, false);
+                this.showContextMenu(e.clientX, e.clientY);
+            }
+        });
+
+        // Password panel controls
+        document.getElementById('defaultEncryptionBtn')?.addEventListener('click', () => {
+            this.selectDefaultEncryption();
+        });
+
+        document.getElementById('passwordEncryptionBtn')?.addEventListener('click', () => {
+            this.selectPasswordEncryption();
+        });
+
+        document.getElementById('unlockBtn')?.addEventListener('click', () => {
+            this.unlockWithPassword();
+        });
+
+        document.getElementById('setPasswordBtn')?.addEventListener('click', () => {
+            this.setPassword();
+        });
+
+        document.getElementById('passwordTextBox')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.unlockWithPassword();
+            }
+        });
+
+        document.getElementById('passwordSetupTextBox')?.addEventListener('input', (e) => {
+            document.getElementById('setPasswordBtn').disabled = e.target.value.length < 3;
+        });
+
+        // Global click handler to hide dropdowns
+        document.addEventListener('click', () => {
+            this.hideDropdowns();
+        });
+
+        // Context menu hide
+        document.addEventListener('click', () => {
+            document.getElementById('accountContextMenu').style.display = 'none';
+        });
     }
 
     /**
@@ -874,6 +961,442 @@ class AccountManager {
                 return new Date(acc.lastUsed) > dayAgo;
             }).length
         };
+    }
+
+    // Windows Forms Specific Methods
+
+    /**
+     * Update place information based on Place ID
+     */
+    async updatePlaceInfo() {
+        const placeId = document.getElementById('placeId')?.value;
+        if (!placeId || isNaN(placeId)) {
+            document.getElementById('currentPlace').textContent = 'Invalid Place ID';
+            return;
+        }
+
+        try {
+            const placeInfo = await this.robloxAPI.getPlaceInfo(placeId);
+            document.getElementById('currentPlace').textContent = placeInfo.name || 'Unknown Place';
+        } catch (error) {
+            document.getElementById('currentPlace').textContent = 'Error loading place';
+        }
+    }
+
+    /**
+     * Shuffle Job ID
+     */
+    shuffleJobId() {
+        // Generate a random Job ID (similar to Roblox format)
+        const jobId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+        
+        document.getElementById('jobId').value = jobId;
+        this.currentJobId = jobId;
+    }
+
+    /**
+     * Toggle dropdown menu visibility
+     */
+    toggleDropdown(menuId) {
+        const menu = document.getElementById(menuId);
+        if (menu) {
+            const isShown = menu.classList.contains('show');
+            this.hideDropdowns();
+            if (!isShown) {
+                menu.classList.add('show');
+            }
+        }
+    }
+
+    /**
+     * Hide all dropdown menus
+     */
+    hideDropdowns() {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+
+    /**
+     * Handle Add Account dropdown actions
+     */
+    handleAddAccountAction(action) {
+        switch (action) {
+            case 'manual':
+                this.openAddAccountModal();
+                break;
+            case 'userpass':
+                this.showBulkImportDialog();
+                break;
+            case 'cookie':
+                this.showCookieImportDialog();
+                break;
+            case 'custom':
+                this.showCustomImportDialog();
+                break;
+        }
+    }
+
+    /**
+     * Handle Open Browser dropdown actions
+     */
+    handleOpenBrowserAction(action) {
+        switch (action) {
+            case 'customurl':
+                this.openCustomURL();
+                break;
+            case 'urljs':
+                this.openURLWithJS();
+                break;
+            case 'joingroup':
+                this.showJoinGroupDialog();
+                break;
+        }
+    }
+
+    /**
+     * Render accounts in Windows Forms ListView style
+     */
+    renderAccounts() {
+        const accountsView = document.getElementById('accountsView');
+        if (!accountsView) return;
+
+        accountsView.innerHTML = '';
+
+        this.accounts.forEach(account => {
+            const row = document.createElement('div');
+            row.className = 'account-row';
+            row.dataset.accountId = account.id;
+
+            const usernameCell = document.createElement('div');
+            usernameCell.className = 'account-cell';
+            usernameCell.style.width = this.hideUsernames ? '0px' : '130px';
+            usernameCell.textContent = this.hideUsernames ? '' : account.username;
+
+            const aliasCell = document.createElement('div');
+            aliasCell.className = 'account-cell';
+            aliasCell.style.width = '120px';
+            aliasCell.textContent = account.alias || '';
+
+            const descriptionCell = document.createElement('div');
+            descriptionCell.className = 'account-cell';
+            descriptionCell.style.width = '200px';
+            descriptionCell.textContent = account.description || '';
+
+            row.appendChild(usernameCell);
+            row.appendChild(aliasCell);
+            row.appendChild(descriptionCell);
+
+            accountsView.appendChild(row);
+        });
+
+        // Update column header visibility
+        const usernameHeader = document.querySelector('.column-header:first-child');
+        if (usernameHeader) {
+            usernameHeader.style.width = this.hideUsernames ? '0px' : '130px';
+        }
+    }
+
+    /**
+     * Select account(s)
+     */
+    selectAccount(accountId, multiSelect = false) {
+        const account = this.accounts.find(acc => acc.id === accountId);
+        if (!account) return;
+
+        if (!multiSelect) {
+            this.selectedAccounts = [account];
+            this.selectedAccount = account;
+        } else {
+            const index = this.selectedAccounts.findIndex(acc => acc.id === accountId);
+            if (index >= 0) {
+                this.selectedAccounts.splice(index, 1);
+            } else {
+                this.selectedAccounts.push(account);
+            }
+            this.selectedAccount = this.selectedAccounts[0] || null;
+        }
+
+        this.updateAccountSelection();
+        this.updateSelectedAccountControls();
+    }
+
+    /**
+     * Update visual selection in account list
+     */
+    updateAccountSelection() {
+        document.querySelectorAll('.account-row').forEach(row => {
+            const accountId = row.dataset.accountId;
+            const isSelected = this.selectedAccounts.some(acc => acc.id === accountId);
+            row.classList.toggle('selected', isSelected);
+        });
+    }
+
+    /**
+     * Update controls based on selected account
+     */
+    updateSelectedAccountControls() {
+        if (this.selectedAccount) {
+            document.getElementById('aliasBox').value = this.selectedAccount.alias || '';
+            document.getElementById('descriptionBox').value = this.selectedAccount.description || '';
+        } else {
+            document.getElementById('aliasBox').value = '';
+            document.getElementById('descriptionBox').value = '';
+        }
+    }
+
+    /**
+     * Show context menu
+     */
+    showContextMenu(x, y) {
+        const menu = document.getElementById('accountContextMenu');
+        if (menu) {
+            menu.style.display = 'block';
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+        }
+    }
+
+    /**
+     * Remove selected accounts
+     */
+    removeSelectedAccounts() {
+        if (this.selectedAccounts.length === 0) return;
+
+        const confirmMessage = `Are you sure you want to remove ${this.selectedAccounts.length} account(s)?`;
+        if (confirm(confirmMessage)) {
+            this.selectedAccounts.forEach(account => {
+                const index = this.accounts.findIndex(acc => acc.id === account.id);
+                if (index >= 0) {
+                    this.accounts.splice(index, 1);
+                }
+            });
+
+            this.selectedAccounts = [];
+            this.selectedAccount = null;
+            this.saveAccounts();
+            this.renderAccounts();
+        }
+    }
+
+    /**
+     * Join server with selected accounts
+     */
+    async joinServer() {
+        if (this.selectedAccounts.length === 0) {
+            alert('Please select at least one account');
+            return;
+        }
+
+        const placeId = this.currentPlaceId;
+        const jobId = this.currentJobId;
+
+        if (!placeId) {
+            alert('Please enter a Place ID');
+            return;
+        }
+
+        // In the original, this would launch Roblox
+        // For web version, we'll show a message
+        alert(`Launching ${this.selectedAccounts.length} account(s) to Place ${placeId}${jobId ? ` (Job: ${jobId})` : ''}`);
+    }
+
+    /**
+     * Follow user
+     */
+    async followUser() {
+        const userId = this.currentUserId;
+        if (!userId) {
+            alert('Please enter a username or user ID');
+            return;
+        }
+
+        if (this.selectedAccounts.length === 0) {
+            alert('Please select at least one account');
+            return;
+        }
+
+        alert(`Following user ${userId} with ${this.selectedAccounts.length} account(s)`);
+    }
+
+    /**
+     * Set alias for selected account
+     */
+    setAlias() {
+        if (!this.selectedAccount) {
+            alert('Please select an account');
+            return;
+        }
+
+        const alias = document.getElementById('aliasBox').value;
+        this.selectedAccount.alias = alias;
+        this.saveAccounts();
+        this.renderAccounts();
+    }
+
+    /**
+     * Set description for selected account
+     */
+    setDescription() {
+        if (!this.selectedAccount) {
+            alert('Please select an account');
+            return;
+        }
+
+        const description = document.getElementById('descriptionBox').value;
+        this.selectedAccount.description = description;
+        this.saveAccounts();
+        this.renderAccounts();
+    }
+
+    /**
+     * Save current settings to selected account
+     */
+    saveToAccount() {
+        if (!this.selectedAccount) {
+            alert('Please select an account');
+            return;
+        }
+
+        // Save current place/job IDs as favorites or recent
+        const data = {
+            placeId: this.currentPlaceId,
+            jobId: this.currentJobId,
+            timestamp: Date.now()
+        };
+
+        if (!this.selectedAccount.savedData) {
+            this.selectedAccount.savedData = [];
+        }
+
+        this.selectedAccount.savedData.push(data);
+        this.saveAccounts();
+        alert('Settings saved to account');
+    }
+
+    /**
+     * Open utilities (server list, etc.)
+     */
+    openUtilities() {
+        alert('Utilities panel would open here (Server List, Games List, Favorites)');
+    }
+
+    /**
+     * Open theme editor
+     */
+    openThemeEditor() {
+        alert('Theme editor would open here');
+    }
+
+    /**
+     * Open account control (Nexus)
+     */
+    openAccountControl() {
+        alert('Account Control (Nexus) would open here');
+    }
+
+    /**
+     * Open browser
+     */
+    openBrowser() {
+        alert('Browser would open here');
+    }
+
+    /**
+     * Open arguments dialog
+     */
+    openArguments() {
+        alert('Arguments dialog would open here');
+    }
+
+    /**
+     * Join Discord
+     */
+    joinDiscord() {
+        alert('Opening Discord invite...');
+    }
+
+    /**
+     * Show recent games
+     */
+    showRecentGames() {
+        alert('Recent games panel would show here');
+    }
+
+    /**
+     * Open donate page
+     */
+    openDonate() {
+        alert('Opening donation page...');
+    }
+
+    /**
+     * Check if password is required
+     */
+    checkPasswordRequired() {
+        const hasPassword = this.storage.hasPasswordProtection();
+        if (hasPassword) {
+            this.showPasswordPanel();
+        }
+    }
+
+    /**
+     * Show password panel
+     */
+    showPasswordPanel() {
+        document.getElementById('passwordPanel').style.display = 'flex';
+        document.getElementById('passwordInput').style.display = 'block';
+    }
+
+    /**
+     * Select default encryption
+     */
+    selectDefaultEncryption() {
+        document.getElementById('encryptionSelection').style.display = 'none';
+        document.getElementById('passwordPanel').style.display = 'none';
+    }
+
+    /**
+     * Select password encryption
+     */
+    selectPasswordEncryption() {
+        document.getElementById('encryptionSelection').style.display = 'none';
+        document.getElementById('passwordSetup').style.display = 'block';
+    }
+
+    /**
+     * Unlock with password
+     */
+    unlockWithPassword() {
+        const password = document.getElementById('passwordTextBox').value;
+        if (this.storage.verifyPassword(password)) {
+            document.getElementById('passwordPanel').style.display = 'none';
+        } else {
+            alert('Invalid password');
+        }
+    }
+
+    /**
+     * Set password
+     */
+    setPassword() {
+        const password = document.getElementById('passwordSetupTextBox').value;
+        if (password.length >= 3) {
+            this.storage.setPassword(password);
+            document.getElementById('passwordPanel').style.display = 'none';
+            alert('Password set successfully');
+        }
+    }
+
+    /**
+     * Open Add Account Modal
+     */
+    openAddAccountModal() {
+        Modal.open('addAccountModal');
     }
 }
 

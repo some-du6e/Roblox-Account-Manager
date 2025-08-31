@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Account Manager</title>
+    <link rel="stylesheet" href="css/windows-forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-window">
+        <!-- Left Panel - Account List -->
+        <div class="left-panel">
+            <!-- Account List View -->
+            <div class="accounts-view-container">
+                <div class="accounts-view-header">
+                    <div class="column-header" style="width: 130px;">Username</div>
+                    <div class="column-header" style="width: 120px;">Alias</div>
+                    <div class="column-header" style="width: 200px;">Description</div>
+                </div>
+                <div id="accountsView" class="accounts-view">
+                    <!-- Account rows will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Bottom Controls -->
+            <div class="bottom-controls">
+                <div class="left-buttons">
+                    <div class="dropdown-button-container">
+                        <button id="addAccountBtn" class="btn">Add Account</button>
+                        <div id="addAccountMenu" class="dropdown-menu">
+                            <div class="menu-item" data-action="manual">Manual Login</div>
+                            <div class="menu-item" data-action="userpass">User:Pass</div>
+                            <div class="menu-item" data-action="cookie">Cookie(s)</div>
+                            <div class="menu-item" data-action="custom">Custom (URL + JS)</div>
+                        </div>
+                    </div>
+                    <button id="removeBtn" class="btn">Remove</button>
+                    <div class="dropdown-button-container">
+                        <button id="openBrowserBtn" class="btn">Open Browser</button>
+                        <div id="openBrowserMenu" class="dropdown-menu">
+                            <div class="menu-item" data-action="customurl">Custom URL</div>
+                            <div class="menu-item" data-action="urljs">URL + JS</div>
+                            <div class="menu-item" data-action="joingroup">Join Group</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-buttons">
+                    <button id="editThemeBtn" class="btn">Edit Theme</button>
+                    <button id="accountControlBtn" class="btn">Account Control</button>
+                </div>
+            </div>
+
+            <!-- Hide Usernames Checkbox -->
+            <div class="hide-usernames-container">
+                <label>
+                    <input type="checkbox" id="hideUsernames" /> Hide usernames
+                </label>
+            </div>
+        </div>
+
+        <!-- Right Panel - Controls -->
+        <div class="right-panel">
+            <!-- Top Icons -->
+            <div class="top-icons">
+                <button id="historyIcon" class="icon-btn" title="Recent Games">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button id="configBtn" class="icon-btn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button id="donateBtn" class="icon-btn" title="Donate">
+                    <i class="fas fa-heart"></i>
+                </button>
+            </div>
+
+            <!-- Place Controls -->
+            <div class="place-controls">
+                <div class="control-row">
+                    <label class="control-label">Place ID</label>
+                    <input type="text" id="placeId" class="bordered-textbox" value="5315046213" />
+                    <button id="shuffleIcon" class="icon-btn" title="Shuffle Job ID">
+                        <i class="fas fa-random"></i>
+                    </button>
+                </div>
+                <div class="control-row">
+                    <label class="control-label">Job ID</label>
+                    <input type="text" id="jobId" class="bordered-textbox" />
+                </div>
+                <div class="current-place">
+                    <span id="currentPlace">Loading...</span>
+                </div>
+            </div>
+
+            <!-- User Controls -->
+            <div class="user-controls">
+                <div class="control-row">
+                    <label class="control-label">Username</label>
+                    <input type="text" id="userId" class="bordered-textbox" />
+                    <button id="followBtn" class="btn small" title="Follow user into their game">Follow</button>
+                </div>
+                <div class="control-row">
+                    <input type="text" id="aliasBox" class="bordered-textbox" placeholder="Alias" />
+                    <button id="setAliasBtn" class="btn small">Set Alias</button>
+                </div>
+                <div class="control-row">
+                    <button id="utilitiesBtn" class="btn small" title="Server List, Games List, and Favorites">Utilities</button>
+                </div>
+            </div>
+
+            <!-- Join Controls -->
+            <div class="join-controls">
+                <button id="joinServerBtn" class="btn large">Join Server</button>
+            </div>
+
+            <!-- Description Area -->
+            <div class="description-area">
+                <textarea id="descriptionBox" class="bordered-textarea" placeholder="Description"></textarea>
+                <button id="setDescriptionBtn" class="btn">Set Description</button>
+            </div>
+
+            <!-- Additional Controls -->
+            <div class="additional-controls">
+                <button id="saveToAccountBtn" class="btn">Save to Account</button>
+                <button id="browserBtn" class="btn">Browser</button>
+                <button id="argumentsBtn" class="btn" style="display: none;">Arguments</button>
+                <button id="joinDiscordBtn" class="btn">Join Discord</button>
+            </div>
+
+            <!-- Progress Bar (hidden by default) -->
+            <div class="progress-container" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-label">Downloading Chromium...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menus -->
+    <div id="accountContextMenu" class="context-menu">
+        <div class="menu-item" data-action="addaccount">Add Account</div>
+        <div class="menu-item" data-action="removeaccount">Remove Account</div>
+        <div class="menu-separator"></div>
+        <div class="menu-item submenu" data-action="copy">
+            Copy
+            <div class="submenu-items">
+                <div class="menu-item" data-action="copyusername">Copy Username</div>
+                <div class="menu-item" data-action="copypassword">Copy Password</div>
+                <div class="menu-item" data-action="copyuserpass">Copy User Pass Combo</div>
+                <div class="menu-item" data-action="copyprofile">Copy Profile</div>
+                <div class="menu-item" data-action="copyuserid">Copy UserId</div>
+            </div>
+        </div>
+        <div class="menu-item" data-action="sortalphabetically">Sort Alphabetically</div>
+        <div class="menu-item" data-action="quicklogin">Quick Log In</div>
+        <div class="menu-item submenu" data-action="groups">
+            Groups
+            <div class="submenu-items">
+                <div class="menu-item" data-action="togglegroups">Toggle</div>
+                <div class="menu-item" data-action="moveaccountto">Move Account To</div>
+                <div class="menu-item" data-action="copygroup">Copy Group</div>
+            </div>
+        </div>
+        <div class="menu-item submenu" data-action="help">
+            Help
+            <div class="submenu-items">
+                <div class="menu-item" data-action="groupshelp">Groups</div>
+                <div class="menu-item" data-action="info">Info</div>
+            </div>
+        </div>
+        <div class="menu-item" data-action="viewfields">View Fields</div>
+        <div class="menu-item" data-action="showdetails">Show Details</div>
+        <div class="menu-item" data-action="getauthticket">Get Authentication Ticket</div>
+        <div class="menu-item" data-action="copysecuritytoken">Copy Security Token</div>
+        <div class="menu-item" data-action="copyrbxplayerlink">Copy Rbxplayer Link</div>
+        <div class="menu-item" data-action="copyapplink">Copy App Link</div>
+    </div>
+
+    <!-- Password/Encryption Panel (hidden by default) -->
+    <div id="passwordPanel" class="password-panel" style="display: none;">
+        <!-- Encryption Selection -->
+        <div id="encryptionSelection" class="encryption-selection">
+            <div class="selection-header">
+                <h2>Please select how you want your data to be secured</h2>
+            </div>
+            <div class="encryption-options">
+                <button id="defaultEncryptionBtn" class="encryption-btn">
+                    <h3>Default (Not Recommended)</h3>
+                    <p>This encryption method only works on this device unless you manually decrypt the data</p>
+                </button>
+                <button id="passwordEncryptionBtn" class="encryption-btn">
+                    <h3>Password Locked (Recommended)</h3>
+                    <p>This encryption method allows sharing your account data across multiple devices and is recommended to prevent loss of data</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Password Input -->
+        <div id="passwordInput" class="password-input" style="display: none;">
+            <div class="password-header">
+                <h2>Restricted Access</h2>
+                <p>Please enter your password to continue</p>
+            </div>
+            <input type="password" id="passwordTextBox" class="password-field" />
+            <button id="unlockBtn" class="btn large">Continue</button>
+        </div>
+
+        <!-- Password Setup -->
+        <div id="passwordSetup" class="password-setup" style="display: none;">
+            <div class="password-header">
+                <h2>Password</h2>
+            </div>
+            <input type="password" id="passwordSetupTextBox" class="password-field" />
+            <button id="setPasswordBtn" class="btn large" disabled>Continue</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="addAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Account</h2>
+                <button class="modal-close" onclick="Modal.close('addAccountModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addAccountForm">
+                    <div class="input-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="alias">Alias (optional):</label>
+                        <input type="text" id="alias" name="alias">
+                    </div>
+                    <div class="input-group">
+                        <label for="description">Description (optional):</label>
+                        <textarea id="description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="group">Group (optional):</label>
+                        <input type="text" id="group" name="group">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" onclick="Modal.close('addAccountModal')">Cancel</button>
+                <button type="button" class="btn primary" onclick="accountManager.handleAddAccount()">Add Account</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Account</h2>
+                <button class="modal-close" onclick="Modal.close('editAccountModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editAccountForm">
+                    <input type="hidden" id="editAccountId" name="id">
+                    <div class="input-group">
+                        <label for="editUsername">Username:</label>
+                        <input type="text" id="editUsername" name="username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="editPassword">Password:</label>
+                        <input type="password" id="editPassword" name="password">
+                    </div>
+                    <div class="input-group">
+                        <label for="editAlias">Alias:</label>
+                        <input type="text" id="editAlias" name="alias">
+                    </div>
+                    <div class="input-group">
+                        <label for="editDescription">Description:</label>
+                        <textarea id="editDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="editGroup">Group:</label>
+                        <input type="text" id="editGroup" name="group">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" onclick="Modal.close('editAccountModal')">Cancel</button>
+                <button type="button" class="btn primary" onclick="accountManager.handleEditAccount()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/Modal.js"></script>
+    <script src="js/Storage.js"></script>
+    <script src="js/Account.js"></script>
+    <script src="js/RobloxAPI.js"></script>
+    <script src="js/AccountManager.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+/* Dark Theme (Default) */
+[data-theme="dark"] {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #2d2d30;
+    --bg-tertiary: #3e3e42;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #969696;
+    --accent-primary: #007acc;
+    --accent-secondary: #1177bb;
+    --success: #4caf50;
+    --warning: #ff9800;
+    --error: #f44336;
+    --border: #464647;
+    --hover: rgba(255, 255, 255, 0.1);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #e0e0e0;
+    --text-primary: #212121;
+    --text-secondary: #424242;
+    --text-muted: #757575;
+    --accent-primary: #2196f3;
+    --accent-secondary: #1976d2;
+    --success: #4caf50;
+    --warning: #ff9800;
+    --error: #f44336;
+    --border: #e0e0e0;
+    --hover: rgba(0, 0, 0, 0.05);
+}
+
+/* Blue Theme */
+[data-theme="blue"] {
+    --bg-primary: #0d1421;
+    --bg-secondary: #1e2a3a;
+    --bg-tertiary: #2c3e50;
+    --text-primary: #ecf0f1;
+    --text-secondary: #bdc3c7;
+    --text-muted: #95a5a6;
+    --accent-primary: #3498db;
+    --accent-secondary: #2980b9;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --error: #e74c3c;
+    --border: #34495e;
+    --hover: rgba(52, 152, 219, 0.1);
+}
+
+/* Green Theme */
+[data-theme="green"] {
+    --bg-primary: #0d1b0d;
+    --bg-secondary: #1a2e1a;
+    --bg-tertiary: #2d4a2d;
+    --text-primary: #e8f5e8;
+    --text-secondary: #c8e6c9;
+    --text-muted: #a5d6a7;
+    --accent-primary: #4caf50;
+    --accent-secondary: #388e3c;
+    --success: #66bb6a;
+    --warning: #ff9800;
+    --error: #f44336;
+    --border: #388e3c;
+    --hover: rgba(76, 175, 80, 0.1);
+}
+
+/* Purple Theme */
+[data-theme="purple"] {
+    --bg-primary: #1a0d1a;
+    --bg-secondary: #2a1a2a;
+    --bg-tertiary: #3a2a3a;
+    --text-primary: #f3e5f5;
+    --text-secondary: #ce93d8;
+    --text-muted: #ba68c8;
+    --accent-primary: #9c27b0;
+    --accent-secondary: #7b1fa2;
+    --success: #4caf50;
+    --warning: #ff9800;
+    --error: #f44336;
+    --border: #7b1fa2;
+    --hover: rgba(156, 39, 176, 0.1);
+}
+
+/* Orange Theme */
+[data-theme="orange"] {
+    --bg-primary: #1a1000;
+    --bg-secondary: #2a1a00;
+    --bg-tertiary: #3a2a10;
+    --text-primary: #fff3e0;
+    --text-secondary: #ffcc02;
+    --text-muted: #ffb74d;
+    --accent-primary: #ff9800;
+    --accent-secondary: #f57c00;
+    --success: #4caf50;
+    --warning: #ffc107;
+    --error: #f44336;
+    --border: #f57c00;
+    --hover: rgba(255, 152, 0, 0.1);
+}
+
+/* Red Theme */
+[data-theme="red"] {
+    --bg-primary: #1a0a0a;
+    --bg-secondary: #2a1a1a;
+    --bg-tertiary: #3a2a2a;
+    --text-primary: #ffebee;
+    --text-secondary: #ffcdd2;
+    --text-muted: #ef9a9a;
+    --accent-primary: #f44336;
+    --accent-secondary: #d32f2f;
+    --success: #4caf50;
+    --warning: #ff9800;
+    --error: #f44336;
+    --border: #d32f2f;
+    --hover: rgba(244, 67, 54, 0.1);
+}
+
+/* Roblox Theme */
+[data-theme="roblox"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --text-muted: #808080;
+    --accent-primary: #00b2ff;
+    --accent-secondary: #0088cc;
+    --success: #00ff88;
+    --warning: #ffaa00;
+    --error: #ff4444;
+    --border: #333333;
+    --hover: rgba(0, 178, 255, 0.1);
+}
+
+/* High Contrast Theme */
+[data-theme="high-contrast"] {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #333333;
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --text-muted: #cccccc;
+    --accent-primary: #ffff00;
+    --accent-secondary: #cccc00;
+    --success: #00ff00;
+    --warning: #ffaa00;
+    --error: #ff0000;
+    --border: #ffffff;
+    --hover: rgba(255, 255, 255, 0.2);
+}
+
+/* Theme transition */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme selector modal */
+.theme-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--bg-secondary);
+}
+
+.theme-option:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.theme-option.active {
+    border-color: var(--accent-primary);
+    background: rgba(var(--accent-primary), 0.1);
+}
+
+.theme-preview {
+    width: 60px;
+    height: 40px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    overflow: hidden;
+}
+
+.theme-preview-color {
+    flex: 1;
+    height: 100%;
+}
+
+.theme-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+/* Dark theme preview */
+.theme-option[data-theme="dark"] .theme-preview {
+    background: linear-gradient(45deg, #1e1e1e 50%, #2d2d30 50%);
+}
+
+/* Light theme preview */
+.theme-option[data-theme="light"] .theme-preview {
+    background: linear-gradient(45deg, #ffffff 50%, #f5f5f5 50%);
+}
+
+/* Blue theme preview */
+.theme-option[data-theme="blue"] .theme-preview {
+    background: linear-gradient(45deg, #0d1421 50%, #3498db 50%);
+}
+
+/* Green theme preview */
+.theme-option[data-theme="green"] .theme-preview {
+    background: linear-gradient(45deg, #0d1b0d 50%, #4caf50 50%);
+}
+
+/* Purple theme preview */
+.theme-option[data-theme="purple"] .theme-preview {
+    background: linear-gradient(45deg, #1a0d1a 50%, #9c27b0 50%);
+}
+
+/* Orange theme preview */
+.theme-option[data-theme="orange"] .theme-preview {
+    background: linear-gradient(45deg, #1a1000 50%, #ff9800 50%);
+}
+
+/* Red theme preview */
+.theme-option[data-theme="red"] .theme-preview {
+    background: linear-gradient(45deg, #1a0a0a 50%, #f44336 50%);
+}
+
+/* Roblox theme preview */
+.theme-option[data-theme="roblox"] .theme-preview {
+    background: linear-gradient(45deg, #0a0a0a 50%, #00b2ff 50%);
+}
+
+/* High contrast theme preview */
+.theme-option[data-theme="high-contrast"] .theme-preview {
+    background: linear-gradient(45deg, #000000 50%, #ffff00 50%);
+}

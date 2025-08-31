@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
-  "applicationId": "js.neutralino.sample",
+  "applicationId": "com.ic3w0lf.robloxaccountmanager",
   "version": "1.0.0",
   "defaultMode": "window",
   "port": 0,
   "documentRoot": "/resources/",
-  "url": "/",
+  "url": "/index-forms.html",
   "enableServer": true,
   "enableNativeAPI": true,
   "tokenSecurity": "one-time",
@@ -16,27 +16,21 @@
   "nativeAllowList": [
     "app.*",
     "os.*",
+    "window.*",
+    "filesystem.*",
     "debug.log"
   ],
   "globalVariables": {
-    "TEST1": "Hello",
-    "TEST2": [
-      2,
-      4,
-      5
-    ],
-    "TEST3": {
-      "value1": 10,
-      "value2": {}
-    }
+    "APP_NAME": "Roblox Account Manager",
+    "APP_VERSION": "1.0.0"
   },
   "modes": {
     "window": {
-      "title": "roblox-account-manager",
+      "title": "Roblox Account Manager",
       "width": 800,
-      "height": 500,
-      "minWidth": 400,
-      "minHeight": 200,
+      "height": 340,
+      "minWidth": 800,
+      "minHeight": 340,
       "center": true,
       "fullScreen": false,
       "alwaysOnTop": false,
@@ -46,7 +40,7 @@
       "maximize": false,
       "hidden": false,
       "resizable": true,
-      "exitProcessOnClose": false
+      "exitProcessOnClose": true
     },
     "browser": {
       "globalVariables": {
